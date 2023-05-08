@@ -162,6 +162,11 @@ class ForemanAPIClient:
                         self.URL, sub_url, hits, page),
                     headers=self.HEADERS, verify=self.VERIFY
                 )
+            if result.status_code == 404:
+                raise ValueError("API endpoint does not exist: {}\n\
+                    You need the foreman plugin puppet installed when passing \
+                    '--environment' explicitly.".replace("  ", "").format(
+                    sub_url))
             if "unable to authenticate" in result.text.lower():
                 raise ValueError("Unable to authenticate")
             if result.status_code not in [200, 201, 202]:

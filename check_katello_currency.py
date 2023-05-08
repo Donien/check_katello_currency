@@ -347,7 +347,15 @@ def validate_filters(options, api_client):
     if options.hostgroup.isdigit() == False:
         options.hostgroup = api_client.get_id_by_name(
             options.hostgroup, "hostgroup")
-    if options.environment.isdigit() == False:
+    if options.environment == "":
+        result = api_client.SESSION.get(
+            "{}{}".format(
+                api_client.URL, "/environments"),
+            headers=api_client.HEADERS, verify=api_client.VERIFY
+        )
+        if result.status_code == 404:
+            options.environment = None
+    if options.environment != None and options.environment.isdigit() == False:
         options.environment = api_client.get_id_by_name(
             options.environment, "environment")
 
