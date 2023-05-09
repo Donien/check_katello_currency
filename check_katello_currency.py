@@ -175,7 +175,7 @@ def check_systems():
         result_text = "{} |{}".format(result_text, perfdata)
 
     #print result and die in a fire
-    print "{}: {}".format(get_return_str(), result_text)
+    print("{}: {}".format(get_return_str(), result_text))
     exit(STATE)
 
 
@@ -275,7 +275,7 @@ def check_stats():
         result_text = "{}| {}".format(result_text, perfdata)
 
     #print result and die in a fire
-    print "{}: {}".format(get_return_str(), result_text)
+    print("{}: {}".format(get_return_str(), result_text))
     exit(STATE)
 
 
@@ -397,6 +397,8 @@ def get_credentials(prefix, input_file=None):
         try:
             #check filemode and read file
             filemode = oct(stat.S_IMODE(os.lstat(input_file).st_mode))
+            #filemode is e.g. "0o644" right now. Remove 'o' for comparison.
+            filemode = filemode.replace("o", "")
             if filemode == "0600":
                 LOGGER.debug("File permission matches 0600")
                 with open(input_file, "r") as auth_file:
@@ -410,7 +412,7 @@ def get_credentials(prefix, input_file=None):
             LOGGER.warning("File non-existent or permissions not 0600!")
             LOGGER.debug("Prompting for {} login credentials as we have a" \
                 " faulty file".format(prefix))
-            s_username = raw_input(prefix + " Username: ")
+            s_username = input(prefix + " Username: ")
             s_password = getpass.getpass(prefix + " Password: ")
             return (s_username, s_password)
     elif prefix.upper()+"_LOGIN" in os.environ and \
@@ -422,7 +424,7 @@ def get_credentials(prefix, input_file=None):
     else:
         #prompt user
         LOGGER.debug("Prompting for {} login credentials".format(prefix))
-        s_username = raw_input(prefix + " Username: ")
+        s_username = input(prefix + " Username: ")
         s_password = getpass.getpass(prefix + " Password: ")
         return (s_username, s_password)
 
@@ -445,8 +447,11 @@ def parse_options(args=None):
     '''
     epilog = '''Check-out the website for more details:
     http://github.com/stdevel/check_katello_currency'''
-    parser = argparse.ArgumentParser(description=desc, version=__version__, \
+    parser = argparse.ArgumentParser(description=desc, \
     epilog=epilog)
+
+    #move version here to fit current python 3 argparse
+    parser.add_argument('--version', action='version', version=__version__)
 
     #define option groups
     gen_opts = parser.add_argument_group("generic arguments")
